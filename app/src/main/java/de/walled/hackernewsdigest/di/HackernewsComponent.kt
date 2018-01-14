@@ -1,6 +1,7 @@
 package de.walled.hackernewsdigest.di
 
 import dagger.Component
+import de.walled.hackernewsdigest.MainActivity
 import javax.inject.Singleton
 
 @Singleton
@@ -11,4 +12,5 @@ import javax.inject.Singleton
 
 interface HackernewsComponent {
 
+    fun inject(mainActivity: MainActivity)
 }

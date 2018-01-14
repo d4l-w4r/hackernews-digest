@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import de.walled.hackernewsdigest.di.GsonTypeAdapters.ZonedDateTimeAdapter
+import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -25,11 +26,12 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        val rxCallAdapter = RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io())
         return Retrofit.Builder()
                 .client(okHttpClient)
                 .baseUrl("https://hacker-news.firebaseio.com/$apiVersion/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.createAsync())
+                .addCallAdapterFactory(rxCallAdapter)
                 .build()
     }
 
