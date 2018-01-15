@@ -1,32 +1,46 @@
 package de.walled.hackernewsdigest.networking
 
+import de.walled.hackernewsdigest.data.ArticleAggregate
+import de.walled.hackernewsdigest.data.NoArticles
+import io.reactivex.Observable
 import io.reactivex.Single
 import retrofit2.Response
 import retrofit2.http.GET
 
 class NewsAggregateService(private val aggregateApi: NewsAggregateApi) {
 
-    fun loadTopStories(): Single<NetworkResult> {
+    fun loadTopStories(): Observable<NetworkResult> {
         return aggregateApi.loadTopStories()
-                .map { it.toAggregateResult() }
+                .flatMapObservable { it -> it.toAggregateResult() }
     }
 
-    fun loadNewStories(): Single<NetworkResult> {
+    fun loadNewStories(): Observable<NetworkResult> {
         return aggregateApi.loadNewStories()
-                .map { it.toAggregateResult() }
+                .flatMapObservable { it -> it.toAggregateResult() }
     }
 
-    fun loadBestStories(): Single<NetworkResult> {
+    fun loadBestStories(): Observable<NetworkResult> {
         return aggregateApi.loadBestStories()
-                .map { it.toAggregateResult() }
+                .flatMapObservable { it -> it.toAggregateResult() }
     }
 
-    private fun Response<List<Long>>.toAggregateResult() =
-            if (this.isSuccessful) {
-                NetworkResult.fromAggregateResponse(this.body() ?: emptyList())
-            } else {
-                NetworkResult.fromErrorResponse(this.code(), this.message())
-            }
+    private fun Response<List<Long>>.toAggregateResult(): Observable<NetworkResult> {
+        val networkResult = if (this.isSuccessful) {
+            succesfulResponseToPayload(this)
+        } else {
+            NetworkResult.fromErrorResponse(this.code(), this.message())
+        }
+        return Observable.just(networkResult)
+    }
+
+    private fun succesfulResponseToPayload(successfulResponse: Response<List<Long>>): NetworkResult {
+        val articleIds = successfulResponse.body()
+        return if (articleIds != null && articleIds.isNotEmpty()) {
+            NetworkResult.fromAggregateResponse(ArticleAggregate(articleIds))
+        } else {
+            NetworkResult.fromAggregateResponse(NoArticles)
+        }
+    }
 }
 
 interface NewsAggregateApi {

@@ -20,7 +20,7 @@ enum class ItemType {
     POLL_OPT
 }
 
-data class HackerNewsItem(
+data class HackerNewsArticle(
         val id: Long,
         val type: ItemType? = null,
         var deleted: Boolean? = null,

@@ -126,19 +126,19 @@ class NewsAggregateServiceTest {
     }
 
     private fun createErrorAPI(errorFunction: () -> Single<Response<List<Long>>>): NewsAggregateApi {
-         return object : NewsAggregateApi {
-             override fun loadTopStories(): Single<Response<List<Long>>> {
-                 return errorFunction()
-             }
+        return object : NewsAggregateApi {
+            override fun loadTopStories(): Single<Response<List<Long>>> {
+                return errorFunction()
+            }
 
-             override fun loadNewStories(): Single<Response<List<Long>>> {
-                 return errorFunction()
-             }
+            override fun loadNewStories(): Single<Response<List<Long>>> {
+                return errorFunction()
+            }
 
-             override fun loadBestStories(): Single<Response<List<Long>>> {
-                 return errorFunction()
-             }
+            override fun loadBestStories(): Single<Response<List<Long>>> {
+                return errorFunction()
+            }
 
-         }
+        }
     }
 }

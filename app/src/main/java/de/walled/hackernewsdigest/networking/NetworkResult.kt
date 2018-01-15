@@ -1,12 +1,12 @@
 package de.walled.hackernewsdigest.networking
 
-import de.walled.hackernewsdigest.data.HackerNewsItem
 import de.walled.hackernewsdigest.data.OptionalArticle
+import de.walled.hackernewsdigest.data.OptionalArticleAggregate
 
 sealed class NetworkResult {
 
     companion object {
-        fun fromAggregateResponse(payload: List<Long>): NetworkResult {
+        fun fromAggregateResponse(payload: OptionalArticleAggregate): NetworkResult {
             return Payload.AggregateArticles(payload)
         }
 
@@ -26,7 +26,7 @@ sealed class NetworkResult {
 
 sealed class Payload : NetworkResult() {
 
-    data class AggregateArticles(val articleIds: List<Long>) : Payload()
+    data class AggregateArticles(val articleAggregate: OptionalArticleAggregate) : Payload()
 
     data class SingleArticle(val article: OptionalArticle) : Payload()
 }
